@@ -1,9 +1,12 @@
 # https://www.liip.ch/en/blog/sentiment-detection-with-keras-word-embeddings-and-lstm-deep-learning-networks
 import keras
 from keras.datasets import imdb
+from keras.layers import Embedding, LSTM, Dense
 from keras.preprocessing import sequence
+from keras.models import Sequential
+from numpy import array
 
-top_words = 200
+top_words = 5000
 
 # Step 1: Get the data
 (X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=top_words)
@@ -38,6 +41,13 @@ scores = model.evaluate(X_test, y_test, verbose=0)
 print("Accuracy: %.2f%%" % (scores[1]*100))
 
 # Step 6: Predict something
+
+word_to_id = keras.datasets.imdb.get_word_index()
+word_to_id = {k:v for k,v in word_to_id.items()}
+word_to_id["<PAD>"] = 0
+word_to_id["<START>"] = 1
+word_to_id["<UNK>"] = 2
+
 bad = "this movie was terrible and bad"
 good = "i really liked the movie and had fun"
 for review in [good,bad]:
@@ -45,4 +55,9 @@ for review in [good,bad]:
     for word in review.split(" "):
         tmp.append(word_to_id[word])
     tmp_padded = sequence.pad_sequences([tmp], maxlen=max_review_length)
-    print("%s. Sentiment: %s" % (review,model.predict(array([tmp_padded][0]))[0][0]))
+    print("%s. Sentiment: %s" % (review, model.predict(array([tmp_padded][0]))[0][0]))
+
+
+# Accuracy: 85.10%
+# i really liked the movie and had fun. Sentiment: 0.45147327
+# this movie was terrible and bad. Sentiment: 0.8456366
