@@ -39,11 +39,12 @@ model.fit(X_train, y_train, validation_data=(X_test, y_test), nb_epoch=3, batch_
 # Step 5: Test the model
 scores = model.evaluate(X_test, y_test, verbose=0)
 print("Accuracy: %.2f%%" % (scores[1]*100))
+print(model.metrics_names)
 
 # Step 6: Predict something
 
 word_to_id = keras.datasets.imdb.get_word_index()
-word_to_id = {k:v for k,v in word_to_id.items()}
+word_to_id = {k:(v+1) for k,v in word_to_id.items()}
 word_to_id["<PAD>"] = 0
 word_to_id["<START>"] = 1
 word_to_id["<UNK>"] = 2
@@ -58,6 +59,14 @@ for review in [good,bad]:
     print("%s. Sentiment: %s" % (review, model.predict(array([tmp_padded][0]))[0][0]))
 
 
+# word_to_id = {k:v for k,v in word_to_id.items()}
 # Accuracy: 85.10%
 # i really liked the movie and had fun. Sentiment: 0.45147327
 # this movie was terrible and bad. Sentiment: 0.8456366
+
+
+# word_to_id = {k:(v+1) for k,v in word_to_id.items()}
+# Accuracy: 85.26%
+# ['loss', 'acc']
+# i really liked the movie and had fun. Sentiment: 0.7944866
+# this movie was terrible and bad. Sentiment: 0.7857737
